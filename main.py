@@ -8,7 +8,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
-
 #### Inicializar variáveis
 dotenv.load_dotenv(dotenv.find_dotenv())
 usuario = os.getenv("user")
@@ -43,35 +42,28 @@ buscar_pessoa = navegador.find_element(By.ID, "people-search-keywords")
 buscar_pessoa.send_keys("rafael rodrigues")
 buscar_pessoa.send_keys(Keys.ENTER)
 time.sleep(delay)
-# Iniciar o SOUP
-src = navegador.page_source
-soup = BeautifulSoup(src, 'lxml')
 #### Rodar a pagina para baixo (carregar todos os alunos encontrados)
 start = time.time()
-# will be used in the while loop
 initialScroll = 0
 finalScroll = 1000
  
 while True:
     navegador.execute_script(f"window.scrollTo({initialScroll}, {finalScroll})")
-    # this command scrolls the window starting from
-    # the pixel value stored in the initialScroll 
-    # variable to the pixel value stored at the
-    # finalScroll variable
+
     initialScroll = finalScroll
     finalScroll += 1000
-  
-    # we will stop the script for 3 seconds so that 
-    # the data can load
+    
+    # Mudar conforme a velocidade da internet
     time.sleep(1)
-    # You can change it as per your needs and internet speed
   
     end = time.time()
-  
-    # We will scroll for 20 seconds.
-    # You can change it as per your needs and internet speed
+    
+    # Tempo de execução
     if round(end - start) > 8:
         break
+# Iniciar o SOUP
+src = navegador.page_source
+soup = BeautifulSoup(src, 'lxml')
 # Pegar a classe que contem o numero de alunos encontrados na pesquisa atual
 intro = soup.find("span", {'class': 't-20 t-black t-bold'})
 
@@ -86,14 +78,17 @@ time.sleep(delay)
 #### Pegar o nome e URL do perfil de cada aluno encontrado
 # Pegar a classe html dos ex-alunos 1 por 1
 alunos = []
+count = 0
 for aluno in soup.find_all("div", {'class': 'artdeco-entity-lockup__title ember-view'}):
-    print("Nome do aluno: " + aluno.find("div").get_text().strip())
-    print("Url do perfil: " + aluno.find("a").get("href"))
-    dados = {
-        "nome": aluno.find("div").get_text().strip(),
-        "url": aluno.find("a").get("href")
-    }
-    alunos.append(dados)
+    if(count == 1):
+        print("Nome do aluno: " + aluno.find("div").get_text().strip())
+        print("Url do perfil: " + aluno.find("a").get("href"))
+        dados = {
+            "nome": aluno.find("div").get_text().strip(),
+            "url": aluno.find("a").get("href")
+        }
+        alunos.append(dados)
+    count = 1
 # Imprimir o dado do primeiro aluno
 print("Nome do aluno: " + alunos[0]["nome"])
 print("Url do perfil: " + alunos[0]["url"])
