@@ -39,7 +39,7 @@ time.sleep(delay)
 
 # Clicar no botão de busca (search button) e digitar o nome do aluno
 buscar_pessoa = navegador.find_element(By.ID, "people-search-keywords")
-buscar_pessoa.send_keys("rafael rodrigues")
+buscar_pessoa.send_keys("engenharia da computação")
 buscar_pessoa.send_keys(Keys.ENTER)
 time.sleep(delay)
 #### Rodar a pagina para baixo (carregar todos os alunos encontrados)
@@ -59,7 +59,7 @@ while True:
     end = time.time()
     
     # Tempo de execução
-    if round(end - start) > 8:
+    if round(end - start) > 60:
         break
 # Iniciar o SOUP
 src = navegador.page_source
@@ -89,9 +89,14 @@ for aluno in soup.find_all("div", {'class': 'artdeco-entity-lockup__title ember-
         }
         alunos.append(dados)
     count = 1
-# Imprimir o dado do primeiro aluno
-print("Nome do aluno: " + alunos[0]["nome"])
-print("Url do perfil: " + alunos[0]["url"])
+import json
+
+# Serializing json
+json_object = json.dumps(alunos, indent=4)
+ 
+# Writing to sample.json
+with open("data.json", "w") as outfile:
+    outfile.write(json_object)
 #navegador.get(alunos[0]["url"])
 navegador.get("https://www.linkedin.com/in/edwaldorodrigues/")
 time.sleep(delay)
